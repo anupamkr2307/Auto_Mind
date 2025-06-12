@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Services | Auto_Mind</title>
+  <style>
+    /* Base Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f9fafb;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: #1f2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav h1 {
+      color: white;
+      font-size: 1.8rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #60a5fa;
+    }
+
+    /* Content Wrapper */
+    .container {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 1.5rem;
+    }
+
+    .heading {
+      font-size: 2.5rem;
+      text-align: center;
+      color: #1e40af;
+      margin-bottom: 2rem;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .service-box {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .service-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .service-title {
+      font-size: 1.3rem;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-description {
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    footer {
+      background-color: #1f2937;
+      color: white;
+      text-align: center;
+      padding: 1.2rem;
+      margin-top: 3rem;
+    }
+
+    /* Responsive Nav */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .heading {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <nav>
+    <h1>Auto_Mind</h1>
+    <div class="nav-links">
+      <a href="car_index.html">Home</a>
+      <a href="about_us.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h2 class="heading">Our Services</h2>
+
+    <div class="service-grid">
+      <div class="service-box">
+        <h3 class="service-title">AI-Powered Car Price Prediction</h3>
+        <p class="service-description">
+          Leverage advanced machine learning algorithms to get accurate car price predictions based on model, mileage, age, and more.
+        </p>
+      </div>
+
+      <div class="service-box">
+        <h3 class="service-title">Market Trend Analysis</h3>
+        <p class="service-description">
+          Get real-time insights into automotive market trends, price movements, and best time to buy or sell.
+        </p>
+      </div>
+
+      <div class="service-box">
+        <h3 class="service-title">VIN-Based Valuation</h3>
+        <p class="service-description">
+          Use vehicle identification number (VIN) to fetch detailed valuation, accident history, and resale potential.
+        </p>
+      </div>
+
+      <div class="service-box">
+        <h3 class="service-title">Dealer Comparison</h3>
+        <p class="service-description">
+          Instantly compare prices offered by different dealers and online platforms to find the best deal.
+        </p>
+      </div>
+
+      <div class="service-box">
+        <h3 class="service-title">Custom Report Generation</h3>
+        <p class="service-description">
+          Download personalized vehicle reports with prediction details, pricing logic, and model performance.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; <span id="year"></span> Auto_Mind. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

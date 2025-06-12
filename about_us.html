@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us | Auto_Mind</title>
+  <style>
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f3f4f6;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: #1f2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav h1 {
+      color: #ffffff;
+      font-size: 1.8rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #60a5fa;
+    }
+
+    /* Content Container */
+    .container {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 1rem;
+    }
+
+    .heading {
+      font-size: 2.5rem;
+      color: #1e40af;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .section h2 {
+      font-size: 1.6rem;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+
+    .section p {
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1f2937;
+      color: white;
+      text-align: center;
+      padding: 1.2rem;
+      margin-top: 3rem;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+        gap: 1rem;
+      }
+
+      .heading {
+        font-size: 2rem;
+      }
+
+      .section h2 {
+        font-size: 1.3rem;
+      }
+
+      .section p {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <nav>
+    <h1>Auto_Mind</h1>
+    <div class="nav-links">
+      <a href="car_index.html">Home</a>
+      <a href="about_us.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1 class="heading">About Us</h1>
+
+    <div class="section">
+      <h2>Who We Are</h2>
+      <p>
+        Auto_Mind is a next-generation platform that uses machine learning to predict car prices accurately. Built by a team of data scientists and automotive professionals, we aim to bring transparency and efficiency to the vehicle pricing process.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Our Vision</h2>
+      <p>
+        We envision a world where car buyers and sellers make well-informed decisions based on real-time data and intelligent insights. Auto_Mind bridges the gap between raw data and smart pricing.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Why Choose Us</h2>
+      <p>
+        With our AI-powered algorithms and user-friendly interface, Auto_Mind ensures reliable predictions, fast performance, and a seamless experience for all users. Join us in driving the future of intelligent pricing.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; <span id="year"></span> Auto_Mind. All rights reserved.
+  </footer>
+
+  <script>
+    // Set current year in footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>

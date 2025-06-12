@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auto_Mind</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: #1f2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav h2 {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #818cf8;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      height: 3px;
+      width: 25px;
+      background: white;
+      margin: 4px 0;
+    }
+
+    .nav-mobile {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.65);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 90%;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      background-color: #4f46e5;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #3730a3;
+    }
+
+    /* Call to Action */
+    .cta {
+      padding: 4rem 2rem;
+      background: #eef2ff;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #1e3a8a;
+    }
+
+    .cta p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #374151;
+    }
+
+    /* Footer */
+    .main-footer {
+      background-color: #1f2937;
+      padding: 2rem 2rem 1rem;
+      color: white;
+      text-align: center;
+    }
+
+    .footer-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .footer-logo h2 {
+      margin-bottom: 0.25rem;
+      font-size: 1.5rem;
+    }
+
+    .footer-social a {
+      margin: 0 0.5rem;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      transform: scale(1.1);
+    }
+
+    .footer-bottom {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .footer-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .hamburger {
+        display: none;
+      }
+
+      .nav-links {
+        display: flex;
+      }
+
+      .nav-mobile {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-mobile.show {
+        display: flex;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .btn {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <h2>Auto_Mind</h2>
+    <div class="nav-links">
+      <a href="car_index.html">Home</a>
+      <a href="about_us.html">About Us</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    
+    <div class="hamburger" onclick="toggleMobileMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+        <div class="nav-mobile" id="mobileMenu">
+            <a href="car_index.html">Home</a>
+            <a href="about_us.html">About Us</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+          </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="hero">
+    <div class="overlay">
+
+    </div>
+  </header>
+
+  <!-- Call to Action -->
+  <section class="cta">
+    <h2>Ready to predict your car's price?</h2>
+    <p>Use our AI-powered tool to get accurate car price estimations instantly.</p>
+    <a href="http://127.0.0.1:5000" class="btn">Show_price</a>
+  </section>
+
+  <!-- Beautiful Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <h2>Auto_Mind</h2>
+        <p>The Intelligence Behind Car Price Prediction</p>
+      </div>
+      <div class="footer-social">
+        <a href="#"><img src="https://img.icons8.com/ios-filled/30/ffffff/facebook--v1.png"/></a>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/30/ffffff/twitter--v1.png"/></a>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/30/ffffff/linkedin.png"/></a>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/30/ffffff/github.png"/></a>
+      </div>
+    </div>
+    <p class="footer-bottom">&copy; <span id="year"></span> Auto_Mind. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function toggleMobileMenu() {
+      document.getElementById("mobileMenu").classList.toggle("show");
+    }
+  </script>
+
+</body>
+</html>
