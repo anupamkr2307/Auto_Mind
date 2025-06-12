@@ -1,1 +1,1 @@
-web: gunicorn main:car_pred
+web: gunicorn car_pred:car_pred
