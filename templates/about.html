@@ -1,0 +1,97 @@
+<!-- templates/about.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Auto_Mind</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        nav { background: rgba(26, 26, 26, 0.95); padding: 1rem 0; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: bold; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-weight: 500; transition: all 0.3s ease; padding: 0.5rem 1rem; border-radius: 8px; }
+        .nav-links a:hover, .nav-links a.active { color: #00d4ff; transform: translateY(-2px); }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 2rem; }
+        h1 { font-size: 2.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-align: center; margin-bottom: 2rem; }
+        .content { background: #2a2a2a; padding: 2rem; border-radius: 15px; margin-bottom: 2rem; }
+        .content h2 { color: #00d4ff; margin-bottom: 1rem; }
+        .content p { color: #b3b3b3; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">Auto_Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict_page">Predict</a></li>
+                <li><a href="/about" class="active">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>About Auto_Mind</h1>
+        <div class="content">
+            <h2>Who We Are</h2>
+            <p>Auto_Mind is a cutting-edge AI-powered platform that revolutionizes car price prediction using advanced machine learning algorithms.</p>
+        </div>
+        <div class="content">
+            <h2>Our Mission</h2>
+            <p>To provide accurate, instant, and reliable car valuations that help buyers and sellers make informed decisions in the automotive market.</p>
+        </div>
+        <div class="content">
+            <h2>Why Choose Us</h2>
+            <p>With our sophisticated AI models trained on extensive automotive data, we deliver precise predictions that you can trust for your vehicle transactions.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+<!-- templates/services.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Auto_Mind</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        nav { background: rgba(26, 26, 26, 0.95); padding: 1rem 0; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: bold; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-weight: 500; transition: all 0.3s ease; padding: 0.5rem 1rem; border-radius: 8px; }
+        .nav-links a:hover, .nav-links a.active { color: #00d4ff; transform: translateY(-2px); }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 2rem; }
+        h1 { font-size: 2.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-align: center; margin-bottom: 2rem; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .service-card { background: #2a2a2a; padding: 2rem; border-radius: 15px; text-align: center; transition: transform 0.3s ease; }
+        .service-card:hover { transform: translateY(-10px); }
+        .service-icon { font-size: 3rem; color: #00d4ff; margin-bottom: 1rem; }
+        .service-card h3 { color: #fff; margin-bottom: 1rem; }
+        .service-card p { color: #b3b3b3; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">Auto_Mind</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict_page">Predict</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/services" class="active">Services</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    
