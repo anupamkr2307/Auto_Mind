@@ -1,148 +1,638 @@
 <!DOCTYPE html>
 <html lang="en">
-<head xmlns="http://www.w3.org/1999/xhtml">
+<head>
     <meta charset="UTF-8">
-    <title>Car Price Predictor</title>
-    <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto_Mind - AI Car Price Prediction</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+        :root {
+            --primary: #0a0a0a;
+            --secondary: #1a1a1a;
+            --accent: #00d4ff;
+            --accent-hover: #00b8e6;
+            --text: #ffffff;
+            --text-muted: #b3b3b3;
+            --card: #2a2a2a;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --error: #ef4444;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundMove 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(20px) translateY(-20px); }
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Floating elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 7s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(-40px) rotate(180deg); }
+            75% { transform: translateY(-20px) rotate(270deg); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .features-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: var(--card);
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 4rem auto;
+            border-radius: 20px;
+            max-width: 1000px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-social a:hover {
+            color: var(--accent);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--accent);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(26, 26, 26, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta {
+                margin: 2rem 1rem;
+                padding: 2rem 1rem;
+            }
+
+            .cta h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-dark">
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">Auto_Mind</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict_page">Predict</a></li>
+                <li><a href="about.html">About</a></li>
+                
+                
+            </ul>
+            <button class="mobile-toggle" id="mobileToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-<div class="container">
-    <div class="row">
-        <div class="card mt-50" style="width: 100%; height: 100%">
-            <div class="card-header" style="text-align: center">
-                <h1>Auto_Mind</h1>
-                <h5>The Intelligence behind Car price prediction</h5>
-            </div>
-            <div class="card-body">
-                <div class="col-12" style="text-align: center">
-                    <h5>This app predicts the price of a car you want to sell. Try filling the details below: </h5>
-                </div>
-                <br>
-                <form method="post" accept-charset="utf-8" name="Modelform">
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <label><b>Select the company:</b> </label><br>
-                        <select class="selectpicker form-control" id="company" name="company" required="1"
-                                onchange="load_car_models(this.id,'car_models')">
-                            {% for company in companies %}
-                            <option value="{{ company }}">{{ company }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <label><b>Select the model:</b> </label><br>
-                        <select class="selectpicker form-control" id="car_models" name="car_models" required="1">
-                        </select>
-                    </div>
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <label><b>Select Year of Purchase:</b> </label><br>
-                        <select class="selectpicker form-control" id="year" name="year" required="1">
-                            {% for year in years %}
-                            <option value="{{ year }}">{{ year }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <label><b>Select the Fuel Type:</b> </label><br>
-                        <select class="selectpicker form-control" id="fuel_type" name="fuel_type" required="1">
-                            {% for fuel in fuel_types %}
-                            <option value="{{ fuel }}">{{ fuel }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <label><b>Enter the Number of Kilometres that the car has travelled:</b> </label><br>
-                        <input type="text" class="form-control" id="kilo_driven" name="kilo_driven"
-                               placeholder="Enter the kilometres driven ">
-                    </div>
-                    <div class="col-md-10 form-group" style="text-align: center">
-                        <button  class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>
-                    </div>
-                </form>
-                <br>
-                <div class="row">
-                    <div class="col-12" style="text-align: center">
-                        <h4><span id="prediction"></span></h4>
-                    </div>
-                </div>
+    <section class="hero">
+        <div class="floating-elements">
+            <i class="fas fa-car floating-element" style="font-size: 4rem;"></i>
+            <i class="fas fa-chart-line floating-element" style="font-size: 3rem;"></i>
+            <i class="fas fa-robot floating-element" style="font-size: 3.5rem;"></i>
+        </div>
+        
+        <div class="hero-content">
+            <h1>Welcome to Auto_Mind</h1>
+            <p>The future of car price prediction powered by advanced AI algorithms. Get accurate, instant valuations for any vehicle with just a few clicks.</p>
+            <div class="hero-buttons">
+                <a href="/predict_page" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Predict Price Now
+                </a>
+                <a href="/about" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
             </div>
         </div>
-    </div>
-</div>
+        
+        <div class="scroll-indicator" onclick="document.querySelector('.features').scrollIntoView({behavior: 'smooth'})">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
 
-<script>
+    <section class="features">
+        <div class="features-header">
+            <h2>Why Choose Auto_Mind?</h2>
+            <p style="color: var(--text-muted); font-size: 1.2rem;">Experience the power of AI-driven car valuations</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain feature-icon"></i>
+                <h3>AI-Powered Accuracy</h3>
+                <p>Our machine learning algorithms analyze thousands of data points to provide the most accurate price predictions in the market.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-bolt feature-icon"></i>
+                <h3>Lightning Fast</h3>
+                <p>Get instant results in seconds. No more waiting hours or days for professional appraisals.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-chart-trending-up feature-icon"></i>
+                <h3>Market Trends</h3>
+                <p>Stay ahead with real-time market analysis and trends that affect your car's value.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-shield-alt feature-icon"></i>
+                <h3>Trusted Results</h3>
+                <p>Backed by extensive data validation and continuous model improvement for reliable predictions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt feature-icon"></i>
+                <h3>Mobile Friendly</h3>
+                <p>Access Auto_Mind from any device, anywhere. Fully responsive design for all screen sizes.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-lock feature-icon"></i>
+                <h3>Secure & Private</h3>
+                <p>Your data is protected with enterprise-grade security. We never store personal information.</p>
+            </div>
+        </div>
+    </section>
 
-    function load_car_models(company_id,car_model_id)
-    {
-        var company=document.getElementById(company_id);
-        var car_model= document.getElementById(car_model_id);
-        console.log(company.value);
-        car_model.value="";
-        car_model.innerHTML="";
-        {% for company in companies %}
-            if( company.value == "{{ company }}")
-            {
-                {% for model in car_models %}
-                    {% if company in model %}
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Discover Your Car's True Value?</h2>
+            <p>Join thousands of satisfied users who trust Auto_Mind for accurate car price predictions</p>
+            <a href="/predict_page" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                <i class="fas fa-rocket"></i> Start Prediction
+            </a>
+        </div>
+    </section>
 
-                        var newOption= document.createElement("option");
-                        newOption.value="{{ model }}";
-                        newOption.innerHTML="{{ model }}";
-                        car_model.options.add(newOption);
-                    {% endif %}
-                {% endfor %}
-            }
-        {% endfor %}
-    }
+    <footer>
+        <div class="footer-content">
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; <span id="year"></span> Auto_Mind. The Intelligence Behind Car Price Prediction.</p>
+        </div>
+    </footer>
 
-    function form_handler(event) {
-        event.preventDefault(); // Don't submit the form normally
-    }
-    function send_data()
-    {
-        document.querySelector('form').addEventListener("submit",form_handler);
+    <script>
+        // Set current year
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-        var fd=new FormData(document.querySelector('form'));
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
 
-        var xhr= new XMLHttpRequest({mozSystem: true});
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            });
+        });
 
-        xhr.open('POST','/predict',true);
-        document.getElementById('prediction').innerHTML="Wait! Predicting Price.....";
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState == XMLHttpRequest.DONE){
-                document.getElementById('prediction').innerHTML="Prediction: ₹"+xhr.responseText;
-
-            }
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         };
 
-        xhr.onload= function(){};
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                }
+            });
+        }, observerOptions);
 
-        xhr.send(fd);
-    }
-</script>
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
 
-
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
+        // Add hover effects
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
 </body>
 </html>
