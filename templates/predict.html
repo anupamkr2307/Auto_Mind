@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Price Prediction - Auto_Mind</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <nav>
@@ -14,9 +14,10 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="/">Home</a></li>
                 <li><a href="/predict_page" class="active">Predict</a></li>
-                <li><a href="/about">About</a></li>
+                <li><a href="/chatbot">Chat</a></li>
                 <li><a href="/services">Services</a></li>
                 <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle">
                 <i class="fas fa-bars"></i>
