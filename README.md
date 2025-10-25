@@ -9,47 +9,6 @@ A Flask-based web application that uses machine learning to predict car prices a
 - **Modern UI**: Responsive design with dark theme and smooth animations
 - **Dynamic Form**: Company-based model selection with real-time updates
 
-## Quick Start
-
-### Option 1: Using Startup Scripts (Recommended)
-
-**Windows:**
-```bash
-start.bat
-```
-
-**Linux/Mac:**
-```bash
-./start.sh
-```
-
-### Option 2: Manual Setup
-
-1. **Install Dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-2. **Configure API Keys**
-Edit the `config.py` file and add your AI API key:
-```python
-AK = "your_actual_api_key_here"
-```
-
-To get an AI API key:
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create a new API key
-3. Copy the key to your `config.py` file
-
-3. **Run the Application**
-```bash
-python app.py
-# or
-python run.py
-```
-
-The application will be available at `http://localhost:5000`
-
 ## Project Structure
 
 ```
@@ -106,9 +65,8 @@ The model uses One-Hot Encoding for categorical features and has been optimized 
 ## Troubleshooting
 
 1. **Model not loading**: Ensure `LinearRegressionModel.pkl` is in the project root
-2. **Chatbot not working**: Check that `AK` is set correctly in `config.py`
-3. **Dropdowns empty**: Verify `Cleaned_Car.csv` is in the project root
-4. **Port already in use**: Change the port in `config.py` or kill the process using port 5000
+2. **Dropdowns empty**: Verify `Cleaned_Car.csv` is in the project root
+3. **Port already in use**: Change the port in `config.py` or kill the process using port 5000
 
 ## Development
 
