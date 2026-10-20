@@ -1,4 +1,4 @@
-# Auto_Mind &mdash; Intelligent Automotive Assistant
+# Auto_Mind - complete car solution
 
 Auto_Mind is a full-stack Flask application that blends machine learning, conversational guidance, and marketplace utilities for car buyers, sellers, and service providers. It ships with a polished dark UI, an AI-powered chatbot, and role-aware collaboration tools (Customers, Mechanics, Car Dealers) in a single deployable project.
 

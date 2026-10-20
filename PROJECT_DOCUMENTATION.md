@@ -1,4 +1,4 @@
-# Auto_Mind – Detailed Technical Documentation
+# Auto_Mind - complete car solution (Detailed Technical Documentation)
 
 _Last updated: November 2025_
 

@@ -9,19 +9,36 @@ from markdown import markdown
 import re
 from datetime import datetime
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Import configuration
 try:
     from config import AK, APP_HOST, APP_PORT
 except ImportError:
-    # Fallback to environment variables if config.py doesn't exist
-    AK = os.getenv('AK')
+    AK = os.getenv('GEMINI_API_KEY') or os.getenv('AK')
     APP_HOST = '0.0.0.0'
     APP_PORT = 5000
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'app.db')
+# Database configuration (support serverless /tmp on Vercel)
+if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'):
+    DB_DIR = '/tmp'
+    DB_PATH = os.path.join(DB_DIR, 'app.db')
+    seed_db = os.path.join(BASE_DIR, 'app.db')
+    if os.path.exists(seed_db) and not os.path.exists(DB_PATH):
+        try:
+            import shutil
+            shutil.copyfile(seed_db, DB_PATH)
+        except Exception as e:
+            print(f"Error copying seed db: {e}")
+else:
+    DB_PATH = os.path.join(BASE_DIR, 'app.db')
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
@@ -95,29 +112,88 @@ def init_db():
     except Exception as e:
         print(f"DB init error: {e}")
 
-# Load the trained model
-try:
-    model = pickle.load(open('LinearRegressionModel.pkl', 'rb'))
-    print("Model loaded successfully!")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    model = None
+# Initialize database schema
+init_db()
+
+MODEL_PATH = os.path.join(BASE_DIR, 'LinearRegressionModel.pkl')
+CSV_PATH = os.path.join(BASE_DIR, 'Cleaned_Car.csv')
+
+model = None
+
+def get_model():
+    """Retrieve the model, loading from disk or retraining on-the-fly if needed"""
+    global model
+    if model is not None:
+        return model
+    
+    # 1. Try loading from saved pickle
+    if os.path.exists(MODEL_PATH):
+        try:
+            with open(MODEL_PATH, 'rb') as f:
+                loaded = pickle.load(f)
+            # Validate prediction capability
+            test_df = pd.DataFrame([['Maruti Suzuki Swift', 'Maruti', 2019, 100, 'Petrol']],
+                                   columns=['name', 'company', 'year', 'kms_driven', 'fuel_type'])
+            loaded.predict(test_df)
+            model = loaded
+            print("Model loaded successfully from disk!")
+            return model
+        except Exception as e:
+            print(f"Pickle load issue ({e}). Retraining model on-the-fly...")
+    
+    # 2. Resilient fallback: retrain directly from CSV
+    if os.path.exists(CSV_PATH):
+        try:
+            from sklearn.preprocessing import OneHotEncoder
+            from sklearn.compose import make_column_transformer
+            from sklearn.pipeline import make_pipeline
+            from sklearn.linear_model import LinearRegression
+
+            car_df = pd.read_csv(CSV_PATH)
+            if 'Unnamed: 0' in car_df.columns:
+                car_df = car_df.drop(columns=['Unnamed: 0'])
+            X = car_df[['name', 'company', 'year', 'kms_driven', 'fuel_type']]
+            y = car_df['Price']
+
+            companies_list = sorted(car_df['company'].unique().tolist())
+            fuel_types_list = sorted(car_df['fuel_type'].unique().tolist())
+            names_list = sorted(car_df['name'].unique().tolist())
+
+            ohe = OneHotEncoder(categories=[names_list, companies_list, fuel_types_list],
+                                handle_unknown='ignore', sparse_output=False)
+            column_trans = make_column_transformer(
+                (ohe, ['name', 'company', 'fuel_type']),
+                remainder='passthrough'
+            )
+            pipe = make_pipeline(column_trans, LinearRegression())
+            pipe.fit(X, y)
+            model = pipe
+            print("Model trained on-the-fly successfully!")
+            try:
+                with open(MODEL_PATH, 'wb') as f:
+                    pickle.dump(pipe, f)
+            except Exception:
+                pass
+            return model
+        except Exception as e:
+            print(f"Error training model on-the-fly: {e}")
+
+    return None
+
+# Warm up model
+model = get_model()
 
 # Load the cleaned dataset to get unique values for dropdowns
 try:
-    df = pd.read_csv('Cleaned_Car.csv')
+    df = pd.read_csv(CSV_PATH)
     print("Dataset loaded successfully!")
-    
-    # Get unique values for dropdowns
     companies = sorted(df['company'].unique().tolist())
     fuel_types = sorted(df['fuel_type'].unique().tolist())
     years = sorted(df['year'].unique().tolist())
     
-    # Get models for each company
     company_models = {}
-    for company in companies:
-        company_models[company] = sorted(df[df['company'] == company]['name'].unique().tolist())
-    
+    for comp in companies:
+        company_models[comp] = sorted(df[df['company'] == comp]['name'].unique().tolist())
 except Exception as e:
     print(f"Error loading dataset: {e}")
     companies = []
@@ -126,14 +202,76 @@ except Exception as e:
     company_models = {}
 
 # Configure AI API
-if AK and AK != "your_ai_api_key_here":
-    genai.configure(api_key=AK)
-    ai_model = genai.GenerativeModel('gemini-pro-latest')
-    print("AI API configured successfully!")
+effective_api_key = os.getenv('GEMINI_API_KEY') or os.getenv('AK') or AK
+ai_model = None
+if effective_api_key and effective_api_key not in ("your_ai_api_key_here", "AIzaSyDi_pLm4wkcwg9XTPB6Di9PPITZc36E95E"):
+    try:
+        genai.configure(api_key=effective_api_key)
+        try:
+            ai_model = genai.GenerativeModel('gemini-1.5-flash')
+        except Exception:
+            ai_model = genai.GenerativeModel('gemini-pro')
+        print("AI API configured successfully!")
+    except Exception as e:
+        print(f"Note: AI API could not be configured ({e}). Intelligent automotive fallback will be active.")
 else:
-    print("AK not configured. Chatbot functionality will be limited.")
-    print("To enable chatbot: Edit config.py and add your AI API key")
-    ai_model = None
+    print("AI API key not set or using default. Intelligent automotive assistant fallback is active.")
+
+def get_automotive_fallback(query):
+    """Provides high-quality, relevant automotive guidance when external AI API is unavailable"""
+    q = (query or '').lower()
+    if any(w in q for w in ['price', 'predict', 'cost', 'worth', 'value', 'valuation']):
+        return markdown("""### 🚗 Car Price Valuation with Auto_Mind
+Auto_Mind uses machine learning trained on market data to estimate realistic vehicle resale values.
+
+**Key factors impacting your car's price:**
+- **Brand & Model:** Market demand and manufacturer reputation.
+- **Year of Manufacture:** Natural vehicle depreciation.
+- **Kilometers Driven:** Mechanical usage and engine wear.
+- **Fuel Type:** Petrol, Diesel, or CNG market preferences.
+
+👉 Use our **[Predict Tool](/predict_page)** to calculate your vehicle's price and plan your loan EMI!""")
+    elif any(w in q for w in ['emi', 'loan', 'finance', 'interest', 'tenure']):
+        return markdown("""### 💰 Auto Loan & EMI Assistance
+Auto_Mind includes a real-time **EMI Calculator** directly on our Predict page.
+
+- **Formula:** `EMI = [P x R x (1+R)^N] / [(1+R)^N - 1]`
+- You can adjust principal amount, annual interest rate (typically 8.5%–11%), and tenure from 1 to 7 years.
+👉 Try it now on the **[Predict & EMI Calculator Page](/predict_page)**.""")
+    elif any(w in q for w in ['rent', 'buy', 'dealer', 'marketplace', 'listing']):
+        return markdown("""### 🤝 Rent & Buy Marketplace
+**Auto_Mind - complete car solution** features a full marketplace:
+- **Car Dealers:** List vehicles for rent or sale and manage customer inquiries.
+- **Customers:** Browse verified listings and submit direct buy/rent requests.
+
+👉 Check out available cars on the **[Rent/Buy Page](/rent_buy)**!""")
+    elif any(w in q for w in ['connect', 'mechanic', 'chat', 'message']):
+        return markdown("""### 🔧 Connect Platform
+Our Connect network brings together:
+- **Customers** looking for advice, maintenance, or vehicle deals.
+- **Mechanics** providing professional repair diagnostics.
+- **Car Dealers** sharing verified inventory.
+
+👉 Join or log into the **[Connect Hub](/connect)** to start private chats.""")
+    elif any(w in q for w in ['service', 'maintenance', 'oil', 'mileage', 'engine', 'tire', 'tyre', 'battery']):
+        return markdown("""### 🛠️ Essential Car Maintenance Checklist
+1. **Engine Oil & Filter:** Replace every 7,500 – 10,000 km (synthetic) or 5,000 km (mineral).
+2. **Tire Care:** Maintain recommended PSI and rotate tires every 10,000 km.
+3. **Brakes & Fluids:** Check brake fluid, coolant, and transmission fluids regularly.
+4. **Battery Health:** Inspect terminals for corrosion every 6 months.
+
+Need a trusted local mechanic? Reach out on our **[Connect Hub](/connect)**!""")
+    else:
+        return markdown(f"""### 🚘 Auto_Mind - complete car solution
+Thank you for asking about **"{query}"**!
+
+Auto_Mind is your all-in-one automotive companion:
+- **Valuation:** Instant machine learning price predictions.
+- **Marketplace:** Dealer-verified buy and rent listings.
+- **Community:** Real-time messaging with mechanics and dealers.
+- **Financial Planning:** Integrated EMI calculator.
+
+Feel free to ask for car maintenance tips, pricing guidelines, or marketplace features!""")
 
 @app.route('/')
 def home():
@@ -316,7 +454,8 @@ def get_models(company):
 def predict():
     """Handle car price prediction"""
     try:
-        if model is None:
+        cur_model = get_model()
+        if cur_model is None:
             return jsonify({'success': False, 'error': 'Model not loaded'})
         
         # Get form data
@@ -340,7 +479,7 @@ def predict():
         ]], columns=['name', 'company', 'year', 'kms_driven', 'fuel_type'])
         
         # Make prediction
-        predicted_price = model.predict(prediction_data)[0]
+        predicted_price = cur_model.predict(prediction_data)[0]
 
         # Handle negative predictions
         if predicted_price < 0:
@@ -367,49 +506,48 @@ def predict():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    """Handle chatbot messages"""
+    """Handle chatbot messages with Google Gemini AI and intelligent fallback"""
     try:
-        if ai_model is None:
-            return jsonify({
-                'success': False, 
-                'response': 'Chatbot service is currently unavailable. Please set the AK environment variable.'
-            })
-        
-        data = request.get_json()
-        message = data.get('message', '')
+        data = request.get_json(silent=True) or {}
+        message = (data.get('message') or '').strip()
         
         if not message:
             return jsonify({'success': False, 'response': 'Please provide a message.'})
         
-        # Create a context-aware prompt for car-related queries
-        prompt = f"""
-        You are an AI assistant for Auto_Mind, a car price prediction platform. 
-        You help users with car-related questions, pricing information, vehicle specifications, 
-        buying and selling advice, car maintenance tips, and general automotive knowledge.
+        # Attempt AI response if model is configured
+        if ai_model is not None:
+            try:
+                prompt = f"""
+                You are an AI assistant for Auto_Mind - complete car solution, an automotive intelligence platform. 
+                You help users with car-related questions, pricing valuations, specifications, 
+                buying, renting, mechanic services, and maintenance tips.
+                
+                User question: {message}
+                
+                Please provide a helpful, accurate, and detailed response formatted with markdown.
+                """
+                response = ai_model.generate_content(prompt)
+                if response and hasattr(response, 'text') and response.text:
+                    html_response = markdown(response.text)
+                    return jsonify({
+                        'success': True,
+                        'response': html_response
+                    })
+            except Exception as ai_err:
+                print(f"AI API request error: {ai_err}. Using intelligent fallback.")
         
-        User's question: {message}
-        
-        Please provide a helpful, accurate, and detailed response. If the question is about car pricing,
-        you can mention that Auto_Mind provides AI-powered price predictions. Keep your response 
-        conversational and informative.
-        """
-        
-        # Generate response using AI
-        response = ai_model.generate_content(prompt)
-        
-        # Convert markdown to HTML
-        html_response = markdown(response.text)
-        
+        # Fallback to intelligent automotive domain assistant
+        fallback_html = get_automotive_fallback(message)
         return jsonify({
             'success': True,
-            'response': html_response
+            'response': fallback_html
         })
         
     except Exception as e:
         print(f"Chat error: {e}")
         return jsonify({
             'success': False, 
-            'response': 'Sorry, I encountered an error. Please try again later.'
+            'response': 'Sorry, I encountered an issue. Please feel free to ask any car-related question!'
         })
 
 # -------------------- Rent/Buy Feature --------------------
