@@ -25,6 +25,7 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'static')
 )
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
+app.url_map.strict_slashes = False
 
 # Database configuration (support serverless /tmp on Vercel)
 if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'):
@@ -274,8 +275,21 @@ Auto_Mind is your all-in-one automotive companion:
 Feel free to ask for car maintenance tips, pricing guidelines, or marketplace features!""")
 
 @app.route('/')
+@app.route('/index')
+@app.route('/api')
+@app.route('/api/')
+@app.route('/api/index')
+@app.route('/api/index.py')
 def home():
     return render_template('index.html')
+
+@app.errorhandler(404)
+def not_found_handler(e):
+    # Gracefully redirect to home for any root/api-level mismatches
+    req = (request.path or '').rstrip('/')
+    if req in ('', '/api', '/api/index', '/api/index.py', '/index'):
+        return render_template('index.html')
+    return render_template('index.html'), 404
 
 @app.route('/predict_page')
 def predict_page():
