@@ -1,6 +1,7 @@
 # Auto_Mind - complete car solution (Detailed Technical Documentation)
 
-_Last updated: November 2025_
+_Last updated: November 2025_  
+**Live Demo:** [auto-mind-pwe6-2omznh5to-anupamkr2307.vercel.app](https://auto-mind-pwe6-2omznh5to-anupamkr2307.vercel.app)
 
 ---
 

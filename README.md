@@ -1,5 +1,11 @@
 # Auto_Mind - complete car solution
 
+> **🌐 Live Demo:** [auto-mind-pwe6-2omznh5to-anupamkr2307.vercel.app](https://auto-mind-pwe6-2omznh5to-anupamkr2307.vercel.app)  
+> **🚀 Vercel Deployment:** [Deployment on Vercel](https://vercel.com/anupamkr2307/auto-mind-pwe6/3PLu4oUr7ycpXyWchnia5wCrRCSp)
+
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Vercel-success?style=for-the-badge&logo=vercel)](https://auto-mind-pwe6-2omznh5to-anupamkr2307.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-Auto__Mind-181717?style=for-the-badge&logo=github)](https://github.com/anupamkr2307/Auto_Mind)
+
 Auto_Mind is a full-stack Flask application that blends machine learning, conversational guidance, and marketplace utilities for car buyers, sellers, and service providers. It ships with a polished dark UI, an AI-powered chatbot, and role-aware collaboration tools (Customers, Mechanics, Car Dealers) in a single deployable project.
 
 ---
