@@ -2,7 +2,7 @@ import os
 import pickle
 import pandas as pd
 import numpy as np
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 import sqlite3
 import google.generativeai as genai
 from markdown import markdown
@@ -290,6 +290,14 @@ def not_found_handler(e):
     if req in ('', '/api', '/api/index', '/api/index.py', '/index'):
         return render_template('index.html')
     return render_template('index.html'), 404
+
+@app.route('/static/<path:filename>')
+def serve_static_file(filename):
+    return send_from_directory(os.path.join(BASE_DIR, 'static'), filename)
+
+@app.route('/styles.css')
+def serve_root_styles_file():
+    return send_from_directory(os.path.join(BASE_DIR, 'static'), 'styles.css', mimetype='text/css')
 
 @app.route('/predict_page')
 def predict_page():
